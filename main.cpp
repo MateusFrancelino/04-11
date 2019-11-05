@@ -12,33 +12,54 @@ const int ALTURA_TELA = 600;
 
 const int TAMANHO_MIRA = 50;
 
-const int ALVOS = 1; // número de alvos que precisam ser destruídos
+const int ALVOS = 10; // número de alvos que precisam ser destruídos
 
 
 
 struct jogador{
     string nome;
-    float pontos=99;
+    int pontos=999999999;
 
 };
 
 
 int main()
 {
-
-jogador player[5];
+    string linha;
+    string limite = ";";
+    size_t  pos;
+    jogador player[5];
+    int aux=0;
 
     ifstream ler;
     string dados;
+    cout<<"Recordes"<<endl;
     ler.open("Save.txt");
-    for(int j=0;j<5;j++){
-    getline(ler,dados);
-    cout<<dados<<endl;
+    if(ler.is_open()){
+        while (getline(ler,linha)) {
+            while((pos=linha.find(limite))!=string::npos){
+                player[aux].nome=linha.substr(0,pos);
+                linha.erase(0,pos+limite.length());
+            }
+            int num= stoi(linha);
+            player[aux].pontos= num ;
+            aux++;
+
+
+        }
+
+    }
+    for (int i=0;i<5;i++){
+        if(player[i].pontos!=999999999)
+        cout<<player[i].nome<<" "<<player[i].pontos<<endl;
+        else{
+           cout<<endl;
+        }
     }
 
     srand(time(0));
 
-    cout << "Digite seu nome de jogador:" << endl << endl;
+    cout << endl<<"Digite seu nome de jogador:" << endl << endl;
 
     string nome;
     cin >> nome;
@@ -135,16 +156,32 @@ jogador player[5];
     int tempoAtual = SDL_GetTicks();
     int tempoTotal = tempoAtual - tempoInicial;
 
+    int pontos=tempoAtual;
+    cout << endl << endl;
+    cout << "Voce destruiu " << alvosDestruidos << " alvos em " << tempoAtual << " milisegundos!" << endl << endl;
+
+
+
+
+
+
+
+
+
+    aux=0;
 
     for (int i=0; i<5; i++)
     {
 
-         if (player[i].pontos<tempoTotal&&player[i].pontos!=tempoTotal)
+        if (player[i].pontos>tempoTotal&&player[i].pontos!=tempoTotal)
          {
+            aux=player[i].pontos;
+            dados=player[i].nome;
               player[i].pontos=tempoTotal;
               player[i].nome=nome;
-              cout<<nome;
-              break;
+              tempoTotal=aux;
+              nome=dados;
+
          }
     }
 
@@ -154,16 +191,17 @@ jogador player[5];
 
 for(int i=0; i<5;i++)
 {
+    if(player[i].pontos!=999999999){
      Salvar <<  player[i].nome;
      Salvar << ";";
      Salvar << player[i].pontos;
      Salvar << endl;
+    }
 }
     Salvar.close();
 ///////////////////////////////////////////////////////////////////////////////
 
-    cout << endl << endl;
-    cout << "Voce destruiu " << alvosDestruidos << " alvos em " << tempoTotal << " milisegundos!" << endl << endl;
+
 
     SDL_Quit();
 
